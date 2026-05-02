@@ -1,0 +1,240 @@
+.calendar-widget {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: var(--radius-xl);
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 800px;
+}
+
+:root.light-mode .calendar-widget {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.calendar-nav h3 {
+  font-size: 1.25rem;
+  min-width: 150px;
+  text-align: center;
+}
+
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding-bottom: 0.5rem;
+}
+
+.calendar-cell {
+  min-height: 100px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.day-off-label, .studied-label {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 2px;
+  line-height: 1;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+:root.light-mode .calendar-cell {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.calendar-cell.today {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.calendar-cell.clickable {
+  cursor: pointer;
+}
+
+.calendar-cell.clickable:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.light-mode .calendar-cell.clickable:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.calendar-cell.studied,
+:root.light-mode .calendar-cell.studied {
+  background: rgba(29, 209, 161, 0.15);
+  color: #1dd1a1;
+  border-color: rgba(29, 209, 161, 0.4);
+  border-style: solid;
+  box-shadow: none;
+}
+
+.calendar-cell.off-day,
+:root.light-mode .calendar-cell.off-day {
+  background: var(--orange-light);
+  color: var(--orange-main);
+  border-color: var(--orange-main);
+  border-style: dashed;
+}
+
+.day-off-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+:root.light-mode .day-off-modal-overlay {
+  background: rgba(248, 250, 252, 0.7);
+}
+
+.day-off-modal {
+  width: 100%;
+  max-width: 400px;
+  padding: 1.5rem;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.modal-header h4 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.modal-date {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+/* Calendar Help / Legend */
+.calendar-help {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.light-mode .calendar-help {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.calendar-help h4 {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.help-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.help-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+:root.light-mode .help-item {
+  color: #475569;
+}
+
+.help-item span {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  min-width: 70px;
+  width: auto; /* Override the 100% width from the cell labels */
+  text-align: center;
+  margin: 0; /* Remove top margin */
+}
+
+.help-item .studied-label {
+  background: rgba(29, 209, 161, 0.15);
+  color: #1dd1a1;
+  border: 1px solid rgba(29, 209, 161, 0.4);
+}
+
+.help-item .day-off-label {
+  background: var(--orange-light);
+  color: var(--orange-main);
+  border: 1px dashed var(--orange-main);
+}

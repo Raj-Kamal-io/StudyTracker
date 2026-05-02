@@ -1,0 +1,59 @@
+.weekly-chart-card {
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.weekly-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.weekly-chart-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.weekly-chart-sub {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+.weekly-chart-body {
+  width: 100%;
+}
+
+.weekly-chart-svg {
+  width: 100%;
+  overflow: visible;
+}
+
+/* Bar entrance animation */
+.weekly-bar {
+  transform-origin: bottom;
+  transform-box: fill-box;
+  animation: barGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--bar-delay, 0ms);
+}
+
+@keyframes barGrow {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.weekly-bar:hover {
+  filter: brightness(1.25);
+  cursor: default;
+}

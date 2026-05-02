@@ -1,0 +1,635 @@
+.session-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000000;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  transition: all 0.5s ease;
+}
+
+:root.light-mode .session-form-overlay {
+  background: #f8fafc;
+}
+
+/* Design Badges at Top */
+.design-badges {
+  position: absolute;
+  top: 2rem;
+  display: flex;
+  gap: 0.5rem;
+  animation: fadeIn 1s ease;
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(10px);
+}
+
+:root.light-mode .badge {
+  background: #fff;
+  border-color: #e2e8f0;
+  color: #64748b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Mode Selection Tabs */
+.mode-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  animation: fadeIn 1.2s ease;
+  margin-bottom: 1rem; /* Brought closer to the clock/card */
+  z-index: 10;
+}
+
+:root.light-mode .mode-tabs {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.mode-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 1rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root.light-mode .mode-tab-btn {
+  color: #94a3b8;
+}
+
+.mode-tab-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+:root.light-mode .mode-tab-btn.active {
+  background: #fff;
+  color: #1e293b;
+}
+
+.mode-tab-btn:hover:not(.active) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Timer Card Container */
+.timer-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 500px; /* Expanded slightly */
+  position: relative;
+}
+
+.timer-card-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle at center, var(--theme-glow) 0%, transparent 60%);
+  z-index: -1;
+  border-radius: 50%;
+  opacity: 0.8;
+  pointer-events: none;
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timer-card {
+  width: 100%;
+  min-height: 480px;
+  background: rgba(15, 15, 18, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 1rem 6rem 1rem; /* Reduced side padding to utilize full width */
+  position: relative;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), inset 0 2px 20px rgba(255, 255, 255, 0.03);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+:root.light-mode .timer-card {
+  background: #ffffff;
+  border-color: #f1f5f9;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.05);
+  padding-bottom: 2rem;
+}
+
+/* Card Settings Overlay */
+.card-settings-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 15, 15, 0.95);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+:root.light-mode .card-settings-overlay {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.card-settings-overlay h3 {
+  color: #fff;
+  margin-bottom: 2rem;
+  font-family: 'Outfit', sans-serif;
+}
+
+:root.light-mode .card-settings-overlay h3 {
+  color: #1e293b;
+}
+
+.setting-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+:root.light-mode .setting-row {
+  color: #64748b;
+}
+
+.adjustor {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+:root.light-mode .adjustor {
+  background: #f1f5f9;
+}
+
+.adjustor button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:root.light-mode .adjustor button {
+  color: #1e293b;
+}
+
+.adjustor .val {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 700;
+  color: #fff;
+}
+
+:root.light-mode .adjustor .val {
+  color: #1e293b;
+}
+
+.done-btn {
+  margin-top: 1rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 99px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Ring Styling */
+.timer-ring-container {
+  position: relative;
+  width: 280px; /* Expanded */
+  height: 280px; /* Expanded */
+  aspect-ratio: 1 / 1; /* Force perfect circle */
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timer-card-container:has(.long-time) .timer-ring-container {
+  width: 280px;
+  height: 280px;
+}
+
+.timer-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.04);
+  stroke-width: 4;
+}
+
+:root.light-mode .ring-track {
+  stroke: #f1f5f9;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--theme-color);
+  stroke-width: 6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px var(--theme-glow)); /* Smooth, subtle, symmetric glow */
+}
+
+/* Inner Content */
+.timer-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  padding: 2.5rem 0; /* Pushes content inwards so it doesn't touch the ring */
+}
+
+.timer-status-icon {
+  font-size: 1.5rem;
+  margin: 0;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.timer-digits {
+  font-family: 'Outfit', sans-serif;
+  font-size: 4.5rem; /* Make it large and sharp */
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -2px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  margin: auto 0; /* Push apart inside flex container */
+}
+
+.timer-digits.long-time {
+  font-size: 2.2rem;
+  letter-spacing: -1px;
+}
+
+:root.light-mode .timer-digits {
+  color: #1e293b;
+}
+
+.timer-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em; /* Refined letter spacing */
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0;
+  margin-bottom: auto; /* Push apart */
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+:root.light-mode .timer-label {
+  color: rgba(30, 41, 59, 0.45);
+}
+
+.timer-toggle-btn {
+  margin: 0;
+  background: var(--theme-color);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px var(--theme-glow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.timer-toggle-btn:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 24px var(--theme-glow);
+}
+
+:root.light-mode .timer-toggle-btn {
+  color: #1e293b;
+}
+
+/* Footer Controls */
+.timer-card-footer {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0 2.5rem;
+  z-index: 10;
+}
+
+.settings-btn,
+.close-card-btn {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.settings-btn:hover,
+.close-card-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.settings-btn.active {
+  color: var(--theme-color);
+  border-color: var(--theme-color);
+}
+
+.settings-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+:root.light-mode .settings-btn,
+:root.light-mode .close-card-btn {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+:root.light-mode .settings-btn:hover,
+:root.light-mode .close-card-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.phase-switch-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 0.7rem 1.8rem;
+  border-radius: 99px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.phase-switch-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+:root.light-mode .phase-switch-btn {
+  background: #1e293b;
+  color: #fff;
+}
+
+:root.light-mode .phase-switch-btn:hover {
+  background: #0f172a;
+}
+
+/* Pagination Dots */
+.pagination-dots {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s;
+}
+
+.dot.active {
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.dot.inactive {
+  opacity: 0.2;
+}
+
+:root.light-mode .dot {
+  background: #cbd5e1;
+}
+
+:root.light-mode .dot.active {
+  background: #1e293b;
+  box-shadow: none;
+}
+
+/* Color themes */
+.timer-card-container.focus {
+  --theme-color: #ff4757;
+  --theme-glow: rgba(255, 71, 87, 0.35);
+}
+
+.timer-card-container.relax {
+  --theme-color: #1dd1a1;
+  --theme-glow: rgba(29, 209, 161, 0.35);
+}
+
+.timer-card-container.manual {
+  --theme-color: #70a1ff;
+  --theme-glow: rgba(112, 161, 255, 0.35);
+}
+
+/* Task Overlay inside Timer Card */
+.timer-tasks-container {
+  width: 100%; /* Utilize full width */
+  max-width: none;
+  max-height: 200px; /* Fixed height container */
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 1rem 1rem 2rem 1rem; /* Proper padding-bottom to prevent clipping */
+  margin-top: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.timer-tasks-container::-webkit-scrollbar {
+  width: 6px;
+}
+.timer-tasks-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15); /* Thin, rounded, dark-themed */
+  border-radius: 99px;
+}
+.timer-tasks-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 99px;
+}
+
+:root.light-mode .timer-tasks-container {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: #e2e8f0;
+}
+
+.mini-task {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: opacity 0.2s;
+}
+
+.mini-task:last-child {
+  border-bottom: none;
+}
+
+.mini-task:hover {
+  opacity: 0.8;
+}
+
+:root.light-mode .mini-task {
+  color: #475569;
+  border-bottom-color: #f1f5f9;
+}
+
+.mini-task span.completed {
+  text-decoration: line-through;
+  opacity: 0.4;
+}
+
+/* Utilities */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes centerSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes absoluteSlideUp {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease both;
+}
+
+.session-animate-slide-up {
+  animation: centerSlideUp 0.35s ease both;
+}
+
+
+
+/* When running — hide tabs for deep focus but keep tasks visible */
+.timer-running .mode-tabs {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+/* Distraction-Free Focus Mode styles */
+.timer-running .timer-card {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  overflow: visible !important; /* Prevent the scaled clock from being clipped */
+}
+
+.timer-running .timer-ring-container {
+  transform: scale(1.15); /* Enlarge clock smoothly */
+}
+
+.timer-running .timer-tasks-container {
+  display: none !important;
+}
+
+.timer-running .timer-card-container::before {
+  opacity: 0.15; /* Dim the background glow significantly for focus */
+}
+
+.timer-running .timer-card-footer {
+  display: none !important;
+}

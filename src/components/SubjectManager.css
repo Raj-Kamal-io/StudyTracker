@@ -1,0 +1,267 @@
+.subject-manager {
+  margin-bottom: 2rem;
+}
+
+.subject-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.subject-manager-header h2 {
+  font-size: 1.5rem;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .subjects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .subjects-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Card ── */
+.subject-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  gap: 0;
+}
+
+.subject-card:hover {
+  transform: translateY(-2px);
+  background: var(--bg-surface-hover);
+}
+
+/* ── Card header row ── */
+.subject-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+.subject-info h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.2rem;
+  color: var(--text-main);
+}
+
+.subject-today-time {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.task-badge {
+  font-size: 0.75rem;
+  border: 1px solid;
+  border-radius: var(--radius-full);
+  padding: 0.1rem 0.5rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.subject-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.subject-card:hover .play-btn {
+  transform: scale(1.1);
+}
+
+/* ── Expanded panel ── */
+.subject-expanded {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+:root.light-mode .subject-expanded {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ── Task list ── */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  transition: background 0.2s;
+}
+
+:root.light-mode .task-item {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.task-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+:root.light-mode .task-item:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.task-text {
+  flex: 1;
+  font-size: 0.9rem;
+  word-break: break-word;
+}
+
+.task-delete {
+  padding: 0.2rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.task-item:hover .task-delete {
+  opacity: 1;
+}
+
+.task-delete:hover {
+  color: var(--danger);
+}
+
+.task-empty {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+/* ── Inline add-task form ── */
+.add-task-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.add-task-form .input-field {
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* ── Delete subject button ── */
+.btn-delete-subject {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--danger);
+  opacity: 0.7;
+  padding: 0.3rem 0;
+  align-self: flex-start;
+  transition: opacity 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-delete-subject:hover {
+  opacity: 1;
+}
+
+/* ── Add Subject form ── */
+.add-subject-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.color-picker {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: transform 0.2s;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.selected {
+  border-color: var(--text-main);
+  transform: scale(1.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.empty-subjects {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+}
+
+:root.light-mode .empty-subjects {
+  border-color: rgba(0, 0, 0, 0.1);
+}
