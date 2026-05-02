@@ -144,20 +144,51 @@ function TodayStudyTimer({ sessions, dailyGoal, setDailyGoal }) {
 }
 
 function FeedbackTab() {
+  const [email, setEmail] = useState('');
+  const [file, setFile] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!feedback.trim()) return;
+    if (!feedback.trim() || !email.trim()) return;
     
-    // Simulate API call
-    setTimeout(() => {
-      setSubmitted(true);
-      setFeedback('');
-      // Reset after a few seconds
-      setTimeout(() => setSubmitted(false), 3000);
-    }, 600);
+    setIsSubmitting(true);
+    setErrorMsg('');
+
+    const formData = new FormData();
+    formData.append("access_key", "3298a1df-6a84-4e30-bd60-6612cbe07b15");
+    formData.append("email", email);
+    formData.append("message", feedback);
+    formData.append("subject", "New StudyTracker Feedback");
+    
+    if (file) {
+      formData.append("attachment", file);
+    }
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setSubmitted(true);
+        setFeedback('');
+        setEmail('');
+        setFile(null);
+        setTimeout(() => setSubmitted(false), 4000);
+      } else {
+        setErrorMsg(data.message || "Something went wrong.");
+      }
+    } catch (err) {
+      setErrorMsg("Failed to send feedback. Check your connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -181,8 +212,26 @@ function FeedbackTab() {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Your feedback has been sent to our team.</p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
+          {errorMsg && (
+            <div style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', textAlign: 'center' }}>
+              {errorMsg}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginLeft: '4px' }}>Your Email</label>
+            <input 
+              type="email"
+              className="input-field" 
+              placeholder="you@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginLeft: '4px' }}>Your Feedback</label>
             <textarea 
@@ -190,18 +239,30 @@ function FeedbackTab() {
               placeholder="Tell us what you love, what you hate, or what you'd like to see next..."
               value={feedback}
               onChange={e => setFeedback(e.target.value)}
-              rows={5}
-              style={{ resize: 'vertical', minHeight: '140px' }}
+              rows={4}
+              style={{ resize: 'vertical', minHeight: '120px' }}
               required
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginLeft: '4px' }}>Attachment (Optional)</label>
+            <input 
+              type="file"
+              accept="image/*"
+              className="input-field" 
+              onChange={e => setFile(e.target.files[0])}
+              style={{ padding: '0.5rem', fontSize: '0.85rem', background: 'rgba(255,255,255,0.02)' }}
             />
           </div>
 
           <button 
             type="submit" 
             className="btn-primary" 
-            style={{ marginTop: '1rem', width: '100%', padding: '1rem', fontSize: '1rem', background: feedback.trim() ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: feedback.trim() ? '#fff' : 'rgba(255,255,255,0.3)', pointerEvents: feedback.trim() ? 'auto' : 'none', boxShadow: feedback.trim() ? 'var(--glow-primary)' : 'none' }}
+            disabled={isSubmitting || !feedback.trim() || !email.trim()}
+            style={{ marginTop: '0.5rem', width: '100%', padding: '1rem', fontSize: '1rem', background: (feedback.trim() && email.trim() && !isSubmitting) ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: (feedback.trim() && email.trim() && !isSubmitting) ? '#fff' : 'rgba(255,255,255,0.3)', pointerEvents: (feedback.trim() && email.trim() && !isSubmitting) ? 'auto' : 'none', boxShadow: (feedback.trim() && email.trim() && !isSubmitting) ? 'var(--glow-primary)' : 'none' }}
           >
-            Submit Feedback
+            {isSubmitting ? 'Sending...' : 'Submit Feedback'}
           </button>
         </form>
       )}
