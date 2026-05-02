@@ -145,7 +145,6 @@ function TodayStudyTimer({ sessions, dailyGoal, setDailyGoal }) {
 
 function FeedbackTab() {
   const [email, setEmail] = useState('');
-  const [file, setFile] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -163,10 +162,6 @@ function FeedbackTab() {
     formData.append("email", email);
     formData.append("message", feedback);
     formData.append("subject", "New StudyTracker Feedback");
-    
-    if (file) {
-      formData.append("attachment", file);
-    }
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -179,7 +174,6 @@ function FeedbackTab() {
         setSubmitted(true);
         setFeedback('');
         setEmail('');
-        setFile(null);
         setTimeout(() => setSubmitted(false), 4000);
       } else {
         setErrorMsg(data.message || "Something went wrong.");
@@ -242,17 +236,6 @@ function FeedbackTab() {
               rows={4}
               style={{ resize: 'vertical', minHeight: '120px' }}
               required
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginLeft: '4px' }}>Attachment (Optional)</label>
-            <input 
-              type="file"
-              accept="image/*"
-              className="input-field" 
-              onChange={e => setFile(e.target.files[0])}
-              style={{ padding: '0.5rem', fontSize: '0.85rem', background: 'rgba(255,255,255,0.02)' }}
             />
           </div>
 
