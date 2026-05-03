@@ -210,13 +210,35 @@ function DashboardTimer({ sessions, dailyGoal, setDailyGoal, timerState, onOpenF
       }}>
         
         {/* Left Column: Circle (Only in Pomodoro) */}
-        {timerState && timerState.mode === 'pomodoro' && (
-          <div className="dash-visual-col" style={{ display: 'flex', justifyContent: 'center' }}>
-            <div className={`dash-timer-circle ${timerState.isActive ? 'pulse' : ''} ${timerState.phase}`}>
-              <Flame size={48} className="flame-icon" />
+        {timerState && timerState.mode === 'pomodoro' && (() => {
+          const totalPhaseSeconds = timerState.phase === 'focus' ? timerState.pomodoroMinutes * 60 : timerState.relaxMinutes * 60;
+          const progress = isGlobalTimerActive ? (timerState.seconds / totalPhaseSeconds) : 1;
+          const radius = 66;
+          const circumference = 2 * Math.PI * radius;
+          const offset = circumference * (1 - progress);
+          
+          return (
+            <div className="dash-visual-col" style={{ display: 'flex', justifyContent: 'center' }}>
+              <div className={`dash-timer-circle ${timerState.isActive ? 'pulse' : ''} ${timerState.phase}`}>
+                <svg className="timer-svg" viewBox="0 0 140 140">
+                  <circle 
+                    className="timer-ring-bg" 
+                    cx="70" cy="70" r={radius} 
+                    strokeWidth="6"
+                  />
+                  <circle 
+                    className="timer-ring-progress" 
+                    cx="70" cy="70" r={radius} 
+                    strokeWidth="6"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={offset}
+                  />
+                </svg>
+                <Flame size={40} className="flame-icon" style={{ position: 'relative', zIndex: 1 }} />
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Right Column: Timer Info */}
         <div className="dash-info-col" style={{ display: 'flex', flexDirection: 'column', alignItems: timerState && timerState.mode === 'pomodoro' ? 'flex-start' : 'center' }}>

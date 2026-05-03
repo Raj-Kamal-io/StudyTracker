@@ -95,6 +95,8 @@
   justify-content: center;
   margin: 0.5rem auto;
   transition: all 0.5s ease;
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .large-timer-circle {
@@ -106,16 +108,46 @@
   justify-content: center;
   margin: 0 auto;
   transition: all 0.5s ease;
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .dash-timer-circle.focus, .large-timer-circle.focus {
-  background: var(--timer-red);
-  box-shadow: 0 0 40px rgba(232, 83, 74, 0.3);
+  box-shadow: 0 0 40px rgba(232, 83, 74, 0.15);
 }
 
 .dash-timer-circle.relax, .large-timer-circle.relax {
-  background: var(--timer-rest);
-  box-shadow: 0 0 40px rgba(74, 222, 128, 0.3);
+  box-shadow: 0 0 40px rgba(74, 222, 128, 0.15);
+}
+
+/* SVG Ring Styles */
+.timer-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.timer-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+}
+
+.timer-ring-progress {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.focus .timer-ring-progress {
+  stroke: var(--timer-red);
+}
+
+.relax .timer-ring-progress {
+  stroke: var(--timer-rest);
 }
 
 .dash-timer-circle.pulse, .large-timer-circle.pulse {

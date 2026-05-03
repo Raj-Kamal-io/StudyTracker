@@ -117,13 +117,35 @@ export function SessionForm({
 
         <div className={`timer-main-layout ${mode}`}>
           {/* Left Column: Large Circle Visual - ONLY in Pomodoro mode */}
-          {mode === 'pomodoro' && (
-            <div className="timer-visual-col">
-              <div className={`large-timer-circle ${isActive ? 'pulse' : ''} ${phase}`}>
-                <Flame size={48} className="flame-icon" />
+          {mode === 'pomodoro' && (() => {
+            const totalPhaseSeconds = phase === 'focus' ? pomodoroMinutes * 60 : relaxMinutes * 60;
+            const progress = seconds / totalPhaseSeconds;
+            const radius = 150;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference * (1 - progress);
+            
+            return (
+              <div className="timer-visual-col">
+                <div className={`large-timer-circle ${isActive ? 'pulse' : ''} ${phase}`}>
+                  <svg className="timer-svg" viewBox="0 0 320 320">
+                    <circle 
+                      className="timer-ring-bg" 
+                      cx="160" cy="160" r={radius} 
+                      strokeWidth="10"
+                    />
+                    <circle 
+                      className="timer-ring-progress" 
+                      cx="160" cy="160" r={radius} 
+                      strokeWidth="10"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={offset}
+                    />
+                  </svg>
+                  <Flame size={80} className="flame-icon" style={{ position: 'relative', zIndex: 1 }} />
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Right Column: Timer Info */}
           <div className="timer-info-col">
