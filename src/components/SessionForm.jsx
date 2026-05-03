@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, X, Timer, Clock, CheckCircle2, Circle, Settings, Coffee, BrainCircuit } from 'lucide-react';
+import { Play, Pause, X, Timer, Clock, CheckCircle2, Circle, Settings, Coffee, BrainCircuit, Flame, Square } from 'lucide-react';
 import './SessionForm.css';
 
 // ── Web Audio beep ────────────
@@ -20,89 +20,34 @@ function playBeep(frequency = 880, duration = 0.4, volume = 0.3) {
 }
 
 export function SessionForm({ 
-  onAddSession, 
   selectedSubject, 
   onClose,
   tasks = [],
   onToggleTask,
+  dailyGoal = 8,
+  sessions = [],
+  isActive,
+  setIsActive,
+  seconds,
+  setSeconds,
+  mode,
+  onSwitchMode,
+  phase,
+  setPhase,
+  pomodoroMinutes,
+  setPomodoroMinutes,
+  relaxMinutes,
+  setRelaxMinutes,
+  saveSession,
+  onTimerAction
 }) {
-  const [mode, setMode] = useState('pomodoro'); // 'timer', 'pomodoro'
-  const [phase, setPhase] = useState('focus'); // 'focus', 'relax'
-  const [isActive, setIsActive] = useState(false);
-  const [seconds, setSeconds] = useState(25 * 60);
-  const [pomodoroMinutes, setPomodoroMinutes] = useState(25);
-  const [relaxMinutes, setRelaxMinutes] = useState(5);
-  const [showSettings, setShowSettings] = useState(false);
-  
-  const intervalRef = useRef(null);
-
-  // Initialize timer
-  useEffect(() => {
-    if (selectedSubject && !isActive) {
-      if (mode === 'timer') {
-        setSeconds(0);
-      } else {
-        setSeconds(phase === 'focus' ? pomodoroMinutes * 60 : relaxMinutes * 60);
-      }
-    }
-  }, [selectedSubject, mode, phase, isActive, pomodoroMinutes, relaxMinutes]);
-
-  useEffect(() => {
-    if (isActive) {
-      intervalRef.current = setInterval(() => {
-        setSeconds((s) => {
-          if (mode === 'pomodoro') {
-            if (s <= 1) {
-              handleComplete();
-              return 0;
-            }
-            return s - 1;
-          }
-          return s + 1;
-        });
-      }, 1000);
-    } else {
-      clearInterval(intervalRef.current);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [isActive, mode]);
-
-  const handleComplete = () => {
-    setIsActive(false);
-    playBeep(880, 0.5, 0.3);
-    
-    if (phase === 'focus') {
-      saveSession(pomodoroMinutes);
-      setPhase('relax');
-      setSeconds(relaxMinutes * 60);
-    } else {
-      setPhase('focus');
-      setSeconds(pomodoroMinutes * 60);
-    }
-  };
-
-  const saveSession = (durationMinutes) => {
-    if (!selectedSubject) return;
-    onAddSession({
-      id: crypto.randomUUID(),
-      subject: selectedSubject.name,
-      duration: durationMinutes,
-      date: new Date().toISOString(),
-      notes: '',
-    });
-  };
-
   const handleMainButton = () => {
-    if (isActive && mode === 'timer') {
-      const elapsedMins = Math.max(1, Math.round(seconds / 60));
-      saveSession(elapsedMins);
-      setIsActive(false);
-      setSeconds(0);
-      onClose();
-      return;
-    }
     setIsActive(!isActive);
-    if (showSettings) setShowSettings(false);
+  };
+
+  const handleStopSession = () => {
+    onTimerAction('stop');
+    onClose();
   };
 
   const formatTime = (totalSeconds) => {
@@ -122,19 +67,6 @@ export function SessionForm({
     setSeconds(newPhase === 'focus' ? pomodoroMinutes * 60 : relaxMinutes * 60);
   };
 
-  const handleSwitchMode = (newMode) => {
-    if (isActive) {
-      if (!confirm("Switch modes? Current timer will be reset.")) return;
-    }
-    setIsActive(false);
-    setMode(newMode);
-    if (newMode === 'timer') {
-      setSeconds(0);
-    } else {
-      setPhase('focus');
-      setSeconds(pomodoroMinutes * 60);
-    }
-  };
 
   const adjustTime = (type, amount) => {
     if (type === 'focus') {
@@ -146,131 +78,72 @@ export function SessionForm({
     }
   };
 
-  // SVG Progress calculation
-  const total = phase === 'focus' ? pomodoroMinutes * 60 : relaxMinutes * 60;
-  const progress = mode === 'pomodoro' ? (seconds / total) : 0;
-  const strokeDash = 2 * Math.PI * 90;
-  const offset = strokeDash * (1 - progress);
+  // Calculate study time today
+  const todayDateStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+  const todayStudySeconds = sessions
+    .filter(s => s.date && new Date(s.date).toLocaleDateString('en-CA') === todayDateStr)
+    .reduce((sum, s) => sum + (s.duration || 0) * 60, 0);
+
+  // Calculate target reach time (for daily goal)
+  const goalSeconds = dailyGoal * 3600;
+  const remainingForGoal = Math.max(0, goalSeconds - todayStudySeconds - (mode === 'timer' ? seconds : 0));
+  const goalReachTime = new Date(Date.now() + remainingForGoal * 1000);
+
+  // Calculate session end time
+  const sessionEndTime = new Date(Date.now() + seconds * 1000);
+
+
+  const today = new Date();
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dDayStr = `${today.getDate()}-${months[today.getMonth()]}-${today.getFullYear().toString().slice(-2)}`;
+  const topDateStr = today.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
 
   return (
-    <div className={`session-form-overlay animate-fade-in ${isActive ? 'timer-running' : ''}`}>
-      {/* Mode Tabs */}
-      {!isActive && (
-        <div className="mode-tabs">
-          <button 
-            className={`mode-tab-btn ${mode === 'timer' ? 'active' : ''}`}
-            onClick={() => handleSwitchMode('timer')}
-          >
-            <Clock size={16} /> Manual
-          </button>
-          <button 
-            className={`mode-tab-btn ${mode === 'pomodoro' ? 'active' : ''}`}
-            onClick={() => handleSwitchMode('pomodoro')}
-          >
-            <Timer size={16} /> Pomodoro
-          </button>
-        </div>
-      )}
-
-      <div className={`timer-card-container ${mode === 'timer' ? 'manual' : phase} session-animate-slide-up`}>
-        <div className={`timer-card glass-panel ${showSettings ? 'settings-open' : ''}`}>
+    <div className={`session-form-overlay animate-fade-in`}>
+      <div className="timer-section-container session-animate-slide-up">
+        
+        {/* Top Header Bar */}
+        <div className="timer-header-bar">
+          <button className="d-day-btn">{dDayStr}</button>
           
-          {showSettings && (
-            <div className="card-settings-overlay animate-fade-in">
-              <h3>Timer Settings</h3>
-              <div className="setting-row">
-                <span>Focus Time</span>
-                <div className="adjustor">
-                  <button onClick={() => adjustTime('focus', -5)}>-</button>
-                  <span className="val">{pomodoroMinutes}m</span>
-                  <button onClick={() => adjustTime('focus', 5)}>+</button>
-                </div>
-              </div>
-              <div className="setting-row">
-                <span>Break Time</span>
-                <div className="adjustor">
-                  <button onClick={() => adjustTime('relax', -1)}>-</button>
-                  <span className="val">{relaxMinutes}m</span>
-                  <button onClick={() => adjustTime('relax', 1)}>+</button>
-                </div>
-              </div>
-              <button className="done-btn" onClick={() => setShowSettings(false)}>Done</button>
-            </div>
-          )}
-
-          <div className="timer-ring-container">
-            <svg viewBox="0 0 200 200" className="timer-svg">
-              <defs>
-                <radialGradient id="innerFace" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="var(--theme-glow)" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#000000" stopOpacity="0.6" />
-                </radialGradient>
-              </defs>
-              <circle cx="100" cy="100" r="88" fill="url(#innerFace)" />
-              <circle cx="100" cy="100" r="90" className="ring-track" />
-              <circle 
-                cx="100" 
-                cy="100" 
-                r="90" 
-                className={`ring-fill ${mode === 'timer' ? 'manual' : ''}`}
-                style={{ 
-                  strokeDasharray: strokeDash,
-                  strokeDashoffset: mode === 'pomodoro' ? offset : 0,
-                  transition: mode === 'pomodoro' ? 'stroke-dashoffset 1s linear' : 'none'
-                }}
-              />
-            </svg>
-            
-            <div className="timer-content">
-              <div className="timer-status-icon">
-                {mode === 'timer' ? <Clock size={28} /> : 
-                 (phase === 'focus' ? <BrainCircuit size={28} /> : <Coffee size={28} />)}
-              </div>
-              <div className={`timer-digits ${seconds >= 3600 ? 'long-time' : ''}`}>
-                {formatTime(seconds)}
-              </div>
-              {mode === 'pomodoro' && (
-                <div className="timer-label">{phase.toUpperCase()}</div>
-              )}
-              
-              <button className="timer-toggle-btn" onClick={handleMainButton}>
-                {isActive ? <Pause size={32} /> : <Play size={32} />}
-              </button>
-            </div>
+          <div className="top-center-settings">
+            {/* Timer mode switch removed during active full screen per user request */}
           </div>
 
-          {/* Task list INSIDE the card */}
-          {tasks.length > 0 && (
-            <div className="timer-tasks-container">
-               {tasks.map(task => (
-                <div key={task.id} className="mini-task" onClick={() => onToggleTask(task.id)}>
-                  {task.completed ? <CheckCircle2 size={16} color="var(--success)" /> : <Circle size={16} />}
-                  <span className={task.completed ? 'completed' : ''}>{task.text}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="timer-card-footer">
-            {mode === 'pomodoro' && (
-              <button 
-                className={`settings-btn ${showSettings ? 'active' : ''}`} 
-                onClick={() => setShowSettings(!showSettings)}
-                disabled={isActive}
-              >
-                <Settings size={20} />
-              </button>
-            )}
-            {mode === 'pomodoro' ? (
-              <button className="phase-switch-btn" onClick={togglePhase}>
-                {phase === 'focus' ? 'BREAK' : 'POMODORO'}
-              </button>
-            ) : (
-              <div className="spacer" style={{ flex: 1 }}></div>
-            )}
-            <button className="close-card-btn" onClick={onClose}><X size={20} /></button>
+          <div className="top-right-controls">
+            <button className="close-btn" onClick={onClose}><X size={20} /></button>
           </div>
         </div>
+
+        <div className={`timer-main-layout ${mode}`}>
+          {/* Left Column: Large Circle Visual - ONLY in Pomodoro mode */}
+          {mode === 'pomodoro' && (
+            <div className="timer-visual-col">
+              <div className={`large-timer-circle ${isActive ? 'pulse' : ''} ${phase}`}>
+                <Flame size={48} className="flame-icon" />
+              </div>
+            </div>
+          )}
+
+          {/* Right Column: Timer Info */}
+          <div className="timer-info-col">
+            {mode === 'pomodoro' && <div className="session-label">{phase === 'focus' ? 'Focus Time' : 'Rest Time'}</div>}
+            <div className="countdown-display">
+              {formatTime(seconds)}
+            </div>
+
+            <div className="timer-actions" style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+              <button className="text-action-btn primary" onClick={handleMainButton} style={{ padding: '0.8rem 2.5rem', borderRadius: '30px', fontSize: '1.2rem', fontWeight: 'bold', border: 'none', background: 'var(--text-main)', color: 'var(--bg-base)', cursor: 'pointer', transition: 'all 0.3s ease' }}>
+                {isActive ? "Pause" : "Resume"}
+              </button>
+              <button className="text-action-btn secondary" onClick={handleStopSession} style={{ padding: '0.8rem 2.5rem', borderRadius: '30px', fontSize: '1.2rem', fontWeight: 'bold', border: '2px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.3s ease' }}>
+                Finish
+              </button>
+            </div>
+          </div>
+        </div>
+
+
       </div>
     </div>
   );

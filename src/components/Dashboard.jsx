@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { CalendarWidget } from './CalendarWidget';
-import { Home, CalendarDays, Clock, Flame, BookOpen, Plus, MessageSquare, Send } from 'lucide-react';
+import { Home, CalendarDays, Clock, Flame, BookOpen, Plus, MessageSquare, Send, BrainCircuit, Coffee, Play, Settings } from 'lucide-react';
 import './Dashboard.css';
 
 // Stable helper outside component so it never causes useMemo to re-run
@@ -9,10 +9,11 @@ const toLocalDateStr = (date) => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
-function TodayStudyTimer({ sessions, dailyGoal, setDailyGoal }) {
+function DashboardTimer({ sessions, dailyGoal, setDailyGoal, timerState, onOpenFullScreen, onSwitchMode, setPomodoroMinutes, setRelaxMinutes, onTimerAction }) {
   const [now, setNow] = useState(Date.now());
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [tempGoal, setTempGoal] = useState(dailyGoal);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 1000);
@@ -37,15 +38,44 @@ function TodayStudyTimer({ sessions, dailyGoal, setDailyGoal }) {
 
   const pad = (n) => String(n).padStart(2, '0');
 
-  // Motivational label
-  const label =
-    todaySeconds === 0
-      ? "No sessions yet — start studying!"
-      : todaySeconds < (dailyGoal * 3600) / 4
-      ? "Great start, keep going!"
-      : todaySeconds < (dailyGoal * 3600) / 2
-      ? "Solid focus session! 🔥"
-      : "Beast mode activated! 🧠";
+  // Calculate display seconds based on state
+  const isGlobalTimerActive = timerState && !!timerState.activeSubject;
+  
+  let displaySeconds = 0;
+  if (isGlobalTimerActive) {
+    displaySeconds = timerState.seconds;
+  } else {
+    if (timerState && timerState.mode === 'pomodoro') {
+      displaySeconds = timerState.pomodoroMinutes * 60;
+    } else {
+      displaySeconds = 0;
+    }
+  }
+  
+  const displayHrs = Math.floor(displaySeconds / 3600);
+  const displayMins = Math.floor((displaySeconds % 3600) / 60);
+  const displaySecs = displaySeconds % 60;
+  
+  const formattedTime = displayHrs > 0 
+    ? `${displayHrs.toString().padStart(2, '0')}:${displayMins.toString().padStart(2, '0')}:${displaySecs.toString().padStart(2, '0')}`
+    : `${displayMins.toString().padStart(2, '0')}:${displaySecs.toString().padStart(2, '0')}`;
+
+
+  const formatHHMM = (d) => {
+    let h = d.getHours();
+    const m = d.getMinutes().toString().padStart(2, '0');
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
+  };
+
+  const getDashboardEstEnd = () => {
+    if (timerState && timerState.mode === 'pomodoro') {
+      const d = new Date(Date.now() + timerState.pomodoroMinutes * 60000);
+      return `Now → ${formatHHMM(d)}`;
+    }
+    return '';
+  };
 
   // Progress toward daily goal
   const goalSeconds = (dailyGoal || 8) * 3600;
@@ -69,74 +99,145 @@ function TodayStudyTimer({ sessions, dailyGoal, setDailyGoal }) {
     }
   };
 
+  const adjustTime = (type, amount) => {
+    if (type === 'focus') {
+      const newVal = Math.max(1, Math.min(120, timerState.pomodoroMinutes + amount));
+      setPomodoroMinutes(newVal);
+    } else {
+      const newVal = Math.max(1, Math.min(60, timerState.relaxMinutes + amount));
+      setRelaxMinutes(newVal);
+    }
+  };
+
+  const handleDashboardPlayClick = (e) => {
+    e.stopPropagation();
+    if (isGlobalTimerActive) {
+      if (timerState.isActive) {
+        onTimerAction('pause');
+      } else {
+        onTimerAction('resume');
+      }
+    }
+  };
+
+  const handleDashboardStopClick = (e) => {
+    e.stopPropagation();
+    onTimerAction('stop');
+  };
+
   return (
-    <div className="today-timer-card glass-panel" style={{ width: '100%', maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="today-timer-header" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div className="today-timer-icon">
-          <Clock size={22} />
-        </div>
-        <span className="today-timer-title">Today's Study Time</span>
-      </div>
-
-      <div className="today-timer-display">
-        <span className="timer-digit">{pad(hrs)}</span>
-        <span className="timer-sep">:</span>
-        <span className="timer-digit">{pad(mins)}</span>
-        <span className="timer-sep">:</span>
-        <span className="timer-digit">{pad(secs)}</span>
-      </div>
-      <div className="timer-units">
-        <span>HRS</span>
-        <div className="unit-spacer" />
-        <span>MIN</span>
-        <div className="unit-spacer" />
-        <span>SEC</span>
-      </div>
-
-      <div className="today-timer-label">{label}</div>
-
-      <div className="today-goal-bar-wrap">
-        <div className="today-goal-bar-track">
-          <div
-            className="today-goal-bar-fill"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <div className="today-goal-info">
-          {isEditingGoal ? (
-            <div className="goal-editor">
-              <input
-                type="number"
-                step="0.5"
-                min="0.5"
-                value={tempGoal}
-                onChange={(e) => setTempGoal(e.target.value)}
-                onBlur={handleSaveGoal}
-                onKeyDown={handleKeyDown}
-                autoFocus
-                className="goal-input"
-              />
-              <span className="goal-input-suffix">h goal</span>
+    <div 
+      className="dashboard-timer-card glass-panel" 
+      style={{ 
+        width: '100%', 
+        maxWidth: '850px', 
+        margin: '0 auto', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        position: 'relative',
+        padding: '2rem 3rem'
+      }}
+      onClick={isGlobalTimerActive ? onOpenFullScreen : undefined}
+    >
+      {/* Top Header Row for Settings */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem', position: 'relative', minHeight: '32px' }}>
+        
+        {/* Left: Settings Icon & Panel */}
+        <div style={{ position: 'absolute', left: 0 }}>
+          {timerState && timerState.mode === 'pomodoro' && (
+            <div style={{ position: 'relative' }}>
+              <button 
+                className="btn-icon" 
+                onClick={(e) => { e.stopPropagation(); setShowSettings(!showSettings); }}
+                style={{ background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '50%', cursor: 'pointer', border: 'none', color: 'var(--text-muted)' }}
+                title="Timer Settings"
+              >
+                <Settings size={18} />
+              </button>
+              
+              {showSettings && (
+                <div className="glass-panel animate-fade-in" style={{ position: 'absolute', top: '120%', left: 0, zIndex: 10, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: '180px', borderRadius: 'var(--radius-lg)' }} onClick={(e) => e.stopPropagation()}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.2rem' }}>Timer Durations</div>
+                  <div className="h-setting" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', opacity: isGlobalTimerActive ? 0.5 : 1, pointerEvents: isGlobalTimerActive ? 'none' : 'auto' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><BrainCircuit size={14} color="var(--primary)" /> <span style={{ fontSize: '0.85rem' }}>Focus</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <button onClick={() => adjustTime('focus', -5)} className="h-adj" style={{ background: 'var(--bg-surface)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', width: '20px', height: '20px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                      <span className="h-val" style={{ fontSize: '0.9rem', fontWeight: '600', width: '24px', textAlign: 'center' }}>{timerState.pomodoroMinutes}</span>
+                      <button onClick={() => adjustTime('focus', 5)} className="h-adj" style={{ background: 'var(--bg-surface)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', width: '20px', height: '20px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                    </div>
+                  </div>
+                  <div className="h-setting" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', opacity: isGlobalTimerActive ? 0.5 : 1, pointerEvents: isGlobalTimerActive ? 'none' : 'auto' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Coffee size={14} color="var(--success)" /> <span style={{ fontSize: '0.85rem' }}>Rest</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <button onClick={() => adjustTime('relax', -1)} className="h-adj" style={{ background: 'var(--bg-surface)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', width: '20px', height: '20px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                      <span className="h-val" style={{ fontSize: '0.9rem', fontWeight: '600', width: '24px', textAlign: 'center' }}>{timerState.relaxMinutes}</span>
+                      <button onClick={() => adjustTime('relax', 1)} className="h-adj" style={{ background: 'var(--bg-surface)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', width: '20px', height: '20px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <button className="goal-display-btn" onClick={() => setIsEditingGoal(true)} title="Click to change goal">
-              <span className="today-goal-text">
-                {Math.round(progress)}% of {dailyGoal}h daily goal
-              </span>
-              <Plus size={12} className="goal-edit-icon" />
-            </button>
           )}
         </div>
+
+        <div style={{ position: 'absolute', right: 0 }}>
+          <div className="pomodoro-toggle-wrap" style={{ background: 'rgba(255,255,255,0.05)', padding: '0.3rem 0.6rem', borderRadius: '20px', cursor: isGlobalTimerActive ? 'not-allowed' : 'default', opacity: isGlobalTimerActive ? 0.5 : 1 }} onClick={(e) => e.stopPropagation()}>
+            <Clock size={14} color="var(--text-muted)" style={{ marginRight: '4px' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255,255,255,0.6)', marginRight: '0.5rem' }}>Pomodoro</span>
+            <button 
+              className={`toggle-pill ${timerState && timerState.mode === 'pomodoro' ? 'on' : ''}`}
+              onClick={() => {
+                if (!isGlobalTimerActive) {
+                  onSwitchMode(timerState && timerState.mode === 'pomodoro' ? 'timer' : 'pomodoro');
+                }
+              }}
+              style={{ pointerEvents: isGlobalTimerActive ? 'none' : 'auto' }}
+            >
+              <div className="toggle-handle" />
+            </button>
+          </div>
+        </div>
+
       </div>
 
-      <div className="today-stats-row">
-        <div className="today-stat">
-          <Flame size={16} className="today-stat-icon flame" />
-          <span>{todaySessions.length} sessions today</span>
-        </div>
-        <div className="today-stat">
-          <BookOpen size={16} className="today-stat-icon book" />
-          <span>{uniqueSubjectsToday} subject{uniqueSubjectsToday !== 1 ? 's' : ''}</span>
+      {/* Main Timer Layout */}
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: timerState && timerState.mode === 'pomodoro' ? 'row' : 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: timerState && timerState.mode === 'pomodoro' ? '4rem' : '2rem'
+      }}>
+        
+        {/* Left Column: Circle (Only in Pomodoro) */}
+        {timerState && timerState.mode === 'pomodoro' && (
+          <div className="dash-visual-col" style={{ display: 'flex', justifyContent: 'center' }}>
+            <div className={`dash-timer-circle ${timerState.isActive ? 'pulse' : ''} ${timerState.phase}`}>
+              <Flame size={48} className="flame-icon" />
+            </div>
+          </div>
+        )}
+
+        {/* Right Column: Timer Info */}
+        <div className="dash-info-col" style={{ display: 'flex', flexDirection: 'column', alignItems: timerState && timerState.mode === 'pomodoro' ? 'flex-start' : 'center' }}>
+          
+          {timerState && timerState.mode === 'pomodoro' ? (
+            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
+              {isGlobalTimerActive ? (timerState.phase === 'focus' ? 'Focus Time' : 'Rest Time') : 'Focus Time'}
+            </div>
+          ) : (
+            <div style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Stopwatch
+            </div>
+          )}
+
+          <div className="countdown-display" style={{ fontSize: '6rem', fontWeight: '700', fontFamily: "'Roboto Mono', monospace", lineHeight: 1, marginBottom: '1rem', color: isGlobalTimerActive && timerState.mode === 'pomodoro' ? (timerState.phase === 'focus' ? 'var(--timer-red)' : 'var(--timer-rest)') : 'var(--text-main)' }}>
+            {formattedTime}
+          </div>
+          
+          <div className="time-range-subtext" style={{ color: 'var(--text-muted)', opacity: 0.6, fontSize: '0.9rem', marginBottom: '2rem', minHeight: '1.2rem' }}>
+            {isGlobalTimerActive ? `Recording: ${timerState.activeSubject?.name}` : getDashboardEstEnd()}
+          </div>
         </div>
       </div>
     </div>
@@ -158,7 +259,7 @@ function FeedbackTab() {
     setErrorMsg('');
 
     const formData = new FormData();
-    formData.append("access_key", "3298a1df-6a84-4e30-bd60-6612cbe07b15");
+    formData.append("access_key", "400fbac2-005e-4c65-89be-617ba0e689ac");
     formData.append("email", email);
     formData.append("message", feedback);
     formData.append("subject", "New StudyTracker Feedback");
@@ -188,8 +289,8 @@ function FeedbackTab() {
   return (
     <div className="feedback-card glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '600px', margin: '0 auto', padding: '3rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-        <div className="today-timer-icon" style={{ background: 'var(--secondary)' }}>
-          <MessageSquare size={20} />
+        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(244, 63, 94, 0.3)' }}>
+          <MessageSquare size={20} color="#fff" />
         </div>
         <h3 style={{ fontSize: '1.25rem', fontFamily: 'Outfit, sans-serif' }}>We value your thoughts</h3>
       </div>
@@ -253,7 +354,7 @@ function FeedbackTab() {
   );
 }
 
-export function Dashboard({ sessions, daysOff, setDaysOff, activeTab, setActiveTab, dailyGoal, setDailyGoal }) {
+export function Dashboard({ sessions, daysOff, setDaysOff, activeTab, setActiveTab, dailyGoal, setDailyGoal, timerState, onOpenFullScreen, onSwitchMode, setPomodoroMinutes, setRelaxMinutes, onTimerAction }) {
 
   return (
     <section className="dashboard animate-slide-up">
@@ -293,7 +394,17 @@ export function Dashboard({ sessions, daysOff, setDaysOff, activeTab, setActiveT
       <div className="dashboard-tab-content">
         {activeTab === 'home' && (
           <div className="tab-pane animate-fade-in">
-            <TodayStudyTimer sessions={sessions} dailyGoal={dailyGoal} setDailyGoal={setDailyGoal} />
+            <DashboardTimer 
+              sessions={sessions} 
+              dailyGoal={dailyGoal} 
+              setDailyGoal={setDailyGoal} 
+              timerState={timerState}
+              onOpenFullScreen={onOpenFullScreen}
+              onSwitchMode={onSwitchMode}
+              setPomodoroMinutes={setPomodoroMinutes}
+              setRelaxMinutes={setRelaxMinutes}
+              onTimerAction={onTimerAction}
+            />
           </div>
         )}
         {activeTab === 'calendar' && (
