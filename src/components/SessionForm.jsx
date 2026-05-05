@@ -141,7 +141,7 @@ export function SessionForm({
                       strokeDashoffset={offset}
                     />
                   </svg>
-                  <Flame size={80} className="flame-icon" style={{ position: 'relative', zIndex: 1 }} />
+                  <Flame className="flame-icon" style={{ position: 'relative', zIndex: 1 }} />
                 </div>
               </div>
             );
@@ -154,11 +154,11 @@ export function SessionForm({
               {formatTime(seconds)}
             </div>
 
-            <div className="timer-actions" style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-              <button className="text-action-btn primary" onClick={handleMainButton} style={{ padding: '0.8rem 2.5rem', borderRadius: '30px', fontSize: '1.2rem', fontWeight: 'bold', border: 'none', background: 'var(--text-main)', color: 'var(--bg-base)', cursor: 'pointer', transition: 'all 0.3s ease' }}>
+            <div className="timer-actions" style={{ marginTop: '1.5rem' }}>
+              <button className="text-action-btn primary" onClick={handleMainButton} style={{ borderRadius: '30px', fontWeight: 'bold', border: 'none', background: 'var(--text-main)', color: 'var(--bg-base)', cursor: 'pointer', transition: 'all 0.3s ease' }}>
                 {isActive ? "Pause" : "Resume"}
               </button>
-              <button className="text-action-btn secondary" onClick={handleStopSession} style={{ padding: '0.8rem 2.5rem', borderRadius: '30px', fontSize: '1.2rem', fontWeight: 'bold', border: '2px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.3s ease' }}>
+              <button className="text-action-btn secondary" onClick={handleStopSession} style={{ borderRadius: '30px', fontWeight: 'bold', border: '2px solid var(--glass-border-subtle)', background: 'transparent', color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.3s ease' }}>
                 Finish
               </button>
             </div>

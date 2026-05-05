@@ -4,7 +4,7 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import { Dashboard } from './components/Dashboard';
 import { SubjectManager } from './components/SubjectManager';
 import { SessionForm } from './components/SessionForm';
-import { SessionList } from './components/SessionList';
+import { TodayProgress } from './components/TodayProgress';
 import './App.css';
 
 function App() {
@@ -211,7 +211,7 @@ function App() {
         </div>
       </header>
 
-      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
         <Dashboard
           sessions={sessions}
           daysOff={daysOff}
@@ -252,9 +252,9 @@ function App() {
           onDeleteTask={handleDeleteTask}
         />
         
-        <SessionList 
+        <TodayProgress 
             sessions={sessions} 
-            onDeleteSession={handleDeleteSession} 
+            subjects={subjects}
             onStartTimerForSubject={handleStartTimerForSubject}
           />
         </main>

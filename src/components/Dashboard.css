@@ -1,5 +1,5 @@
 .dashboard {
-  margin: 0 auto 2rem auto;
+  margin: 0 auto 1.5rem auto;
   width: 100%;
   max-width: 900px;
   display: grid;
@@ -16,17 +16,17 @@
   padding: 4px;
   gap: 0;
   width: fit-content;
-  margin: 0 auto 1.5rem auto;
+  margin: 0 auto 1rem auto;
   overflow: hidden;
 }
 
 .dashboard-tab {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1.4rem;
+  gap: 0.35rem;
+  padding: 0.45rem 0.8rem;
   border-radius: calc(var(--radius-xl) - 4px);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   color: var(--text-muted);
@@ -36,8 +36,13 @@
   transition: color var(--transition-fast);
   position: relative;
   z-index: 1;
-  min-width: 110px;
+  min-width: 80px;
   justify-content: center;
+}
+
+.dashboard-tab svg {
+  width: 14px;
+  height: 14px;
 }
 
 .dashboard-tab.active {
@@ -49,7 +54,7 @@
   top: 4px;
   bottom: 4px;
   left: 4px;
-  width: calc((100% - 8px) / 3); /* Updated for 3 tabs */
+  width: calc((100% - 8px) / 3);
   background: var(--primary);
   border-radius: calc(var(--radius-xl) - 6px);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -76,7 +81,7 @@
 
 /* ── Today Timer Card ── */
 .today-timer-card {
-  padding: 4rem;
+  padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,8 +92,8 @@
 }
 
 .dash-timer-circle {
-  width: 140px;
-  height: 140px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -96,12 +101,12 @@
   margin: 0.5rem auto;
   transition: all 0.5s ease;
   position: relative;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--glass-bg-subtle);
 }
 
 .large-timer-circle {
-  width: 320px;
-  height: 320px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -109,7 +114,7 @@
   margin: 0 auto;
   transition: all 0.5s ease;
   position: relative;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--glass-bg-subtle);
 }
 
 .dash-timer-circle.focus, .large-timer-circle.focus {
@@ -131,7 +136,7 @@
 
 .timer-ring-bg {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.05);
+  stroke: var(--glass-border-subtle);
 }
 
 .timer-ring-progress {
@@ -213,15 +218,15 @@
 /* ── Legacy stat cards (kept for safety) ── */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .stat-card {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  gap: 1rem;
+  padding: 1rem;
   transition: transform var(--transition-normal);
 }
 
@@ -230,8 +235,8 @@
 }
 
 .stat-icon {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
@@ -247,7 +252,7 @@
 }
 
 .stat-value {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-main);
   font-family: 'Outfit', sans-serif;
@@ -255,7 +260,111 @@
 }
 
 .stat-label {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   font-weight: 500;
+}
+
+/* ── Dashboard Timer Card responsive overrides ── */
+.dashboard-timer-card .countdown-display {
+  font-size: 3rem !important;
+}
+
+.dashboard-timer-card .time-range-subtext {
+  font-size: 0.8rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* ── Responsive: Tablet ── */
+@media (min-width: 640px) {
+  .dashboard {
+    margin: 0 auto 2rem auto;
+  }
+  .dashboard-tabs {
+    margin: 0 auto 1.5rem auto;
+  }
+  .dashboard-tab {
+    gap: 0.5rem;
+    padding: 0.55rem 1.2rem;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+  .dashboard-tab svg {
+    width: 16px;
+    height: 16px;
+  }
+  .dash-timer-circle {
+    width: 120px;
+    height: 120px;
+  }
+  .large-timer-circle {
+    width: 280px;
+    height: 280px;
+  }
+  .today-timer-card {
+    padding: 3rem 2rem;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+  }
+  .stat-card {
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+  .stat-icon {
+    width: 52px;
+    height: 52px;
+  }
+  .stat-value {
+    font-size: 1.65rem;
+  }
+  .dashboard-timer-card .countdown-display {
+    font-size: 4.5rem !important;
+  }
+}
+
+/* ── Responsive: Desktop ── */
+@media (min-width: 1024px) {
+  .dashboard-tab {
+    gap: 0.5rem;
+    padding: 0.55rem 1.4rem;
+    font-size: 0.875rem;
+    min-width: 110px;
+  }
+  .dash-timer-circle {
+    width: 140px;
+    height: 140px;
+  }
+  .large-timer-circle {
+    width: 320px;
+    height: 320px;
+  }
+  .today-timer-card {
+    padding: 4rem;
+  }
+  .stats-grid {
+    gap: 1.5rem;
+  }
+  .stat-card {
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+  }
+  .stat-value {
+    font-size: 1.75rem;
+  }
+  .dashboard-timer-card .countdown-display {
+    font-size: 6rem !important;
+  }
+  .dashboard-timer-main-layout {
+    flex-direction: row !important;
+    gap: 4rem !important;
+  }
+  .dashboard-timer-card .dash-info-col {
+    align-items: flex-start !important;
+  }
 }

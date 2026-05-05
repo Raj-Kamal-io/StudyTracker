@@ -1,6 +1,6 @@
 .calendar-widget {
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
   border-radius: var(--radius-xl);
   background: #000000;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -16,20 +16,21 @@
 
 .calendar-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.75rem;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .calendar-nav {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .calendar-nav h3 {
-  font-size: 1.25rem;
-  min-width: 150px;
+  font-size: 1rem;
+  min-width: 120px;
   text-align: center;
 }
 
@@ -39,43 +40,44 @@
   gap: 0.5rem;
   background: rgba(239, 68, 68, 0.15);
   color: var(--danger);
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 0.75rem;
   border-radius: var(--radius-full);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .calendar-weekday {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
 }
 
 .calendar-cell {
-  min-height: 100px;
+  min-height: 48px;
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all var(--transition-fast);
   position: relative;
+  padding: 0.25rem 0.15rem;
 }
 
 .day-off-label, .studied-label {
-  font-size: 0.55rem;
+  font-size: 0.45rem;
   font-weight: 700;
   text-transform: uppercase;
   margin-top: 2px;
@@ -85,7 +87,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
 :root.light-mode .calendar-cell {
@@ -150,7 +152,7 @@
 .day-off-modal {
   width: 100%;
   max-width: 400px;
-  padding: 1.5rem;
+  padding: 1.25rem;
 }
 
 .modal-header {
@@ -161,26 +163,27 @@
 }
 
 .modal-header h4 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   margin: 0;
 }
 
 .modal-date {
   color: var(--text-muted);
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
 }
 
 .modal-actions {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
 }
 
 /* Calendar Help / Legend */
 .calendar-help {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -189,9 +192,9 @@
 }
 
 .calendar-help h4 {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -199,14 +202,14 @@
 .help-items {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .help-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  font-size: 0.85rem;
+  gap: 0.75rem;
+  font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -219,12 +222,12 @@
   padding: 4px 8px;
   border-radius: 4px;
   font-weight: 700;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
-  min-width: 70px;
-  width: auto; /* Override the 100% width from the cell labels */
+  min-width: 60px;
+  width: auto;
   text-align: center;
-  margin: 0; /* Remove top margin */
+  margin: 0;
 }
 
 .help-item .studied-label {
@@ -237,4 +240,100 @@
   background: var(--orange-light);
   color: var(--orange-main);
   border: 1px dashed var(--orange-main);
+}
+
+/* ── Responsive: Tablet ── */
+@media (min-width: 640px) {
+  .calendar-widget {
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .calendar-header {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .calendar-nav {
+    gap: 0.75rem;
+  }
+  .calendar-nav h3 {
+    font-size: 1.15rem;
+    min-width: 140px;
+  }
+  .streak-badge {
+    font-size: 1rem;
+    padding: 0.4rem 0.9rem;
+  }
+  .calendar-grid {
+    gap: 0.35rem;
+  }
+  .calendar-weekday {
+    font-size: 0.8rem;
+    padding-bottom: 0.4rem;
+  }
+  .calendar-cell {
+    min-height: 70px;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.2rem;
+  }
+  .day-off-label, .studied-label {
+    font-size: 0.5rem;
+  }
+  .help-item {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+  .help-item span {
+    font-size: 0.65rem;
+    min-width: 70px;
+  }
+  .modal-header h4 {
+    font-size: 1.25rem;
+  }
+  .modal-date {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+  .modal-actions {
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+}
+
+/* ── Responsive: Desktop ── */
+@media (min-width: 1024px) {
+  .calendar-widget {
+    padding: 1.5rem;
+  }
+  .calendar-header {
+    margin-bottom: 1.5rem;
+  }
+  .calendar-nav {
+    gap: 1rem;
+  }
+  .calendar-nav h3 {
+    font-size: 1.25rem;
+    min-width: 150px;
+  }
+  .streak-badge {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+  }
+  .calendar-grid {
+    gap: 0.5rem;
+  }
+  .calendar-weekday {
+    font-size: 0.85rem;
+    padding-bottom: 0.5rem;
+  }
+  .calendar-cell {
+    min-height: 100px;
+    font-size: 0.95rem;
+  }
+  .day-off-label, .studied-label {
+    font-size: 0.55rem;
+  }
+  .help-items {
+    gap: 0.75rem;
+  }
 }

@@ -135,21 +135,21 @@ function DashboardTimer({ sessions, dailyGoal, setDailyGoal, timerState, onOpenF
         display: 'flex', 
         flexDirection: 'column', 
         position: 'relative',
-        padding: '2rem 3rem'
+        padding: 'clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 3rem)'
       }}
       onClick={isGlobalTimerActive ? onOpenFullScreen : undefined}
     >
       {/* Top Header Row for Settings */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem', position: 'relative', minHeight: '32px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'clamp(1rem, 3vw, 2rem)', minHeight: '32px', gap: '0.5rem' }}>
         
         {/* Left: Settings Icon & Panel */}
-        <div style={{ position: 'absolute', left: 0 }}>
+        <div style={{ flexShrink: 0 }}>
           {timerState && timerState.mode === 'pomodoro' && (
             <div style={{ position: 'relative' }}>
               <button 
                 className="btn-icon" 
                 onClick={(e) => { e.stopPropagation(); setShowSettings(!showSettings); }}
-                style={{ background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '50%', cursor: 'pointer', border: 'none', color: 'var(--text-muted)' }}
+                style={{ background: 'var(--glass-bg-subtle)', padding: '0.5rem', borderRadius: '50%', cursor: 'pointer', border: 'none', color: 'var(--text-muted)' }}
                 title="Timer Settings"
               >
                 <Settings size={18} />
@@ -180,10 +180,10 @@ function DashboardTimer({ sessions, dailyGoal, setDailyGoal, timerState, onOpenF
           )}
         </div>
 
-        <div style={{ position: 'absolute', right: 0 }}>
-          <div className="pomodoro-toggle-wrap" style={{ background: 'rgba(255,255,255,0.05)', padding: '0.3rem 0.6rem', borderRadius: '20px', cursor: isGlobalTimerActive ? 'not-allowed' : 'default', opacity: isGlobalTimerActive ? 0.5 : 1 }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ flexShrink: 0 }}>
+          <div className="pomodoro-toggle-wrap" style={{ background: 'var(--glass-bg-subtle)', padding: '0.3rem 0.6rem', borderRadius: '20px', cursor: isGlobalTimerActive ? 'not-allowed' : 'default', opacity: isGlobalTimerActive ? 0.5 : 1 }} onClick={(e) => e.stopPropagation()}>
             <Clock size={14} color="var(--text-muted)" style={{ marginRight: '4px' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255,255,255,0.6)', marginRight: '0.5rem' }}>Pomodoro</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)', marginRight: '0.5rem' }}>Pomodoro</span>
             <button 
               className={`toggle-pill ${timerState && timerState.mode === 'pomodoro' ? 'on' : ''}`}
               onClick={() => {
@@ -201,12 +201,13 @@ function DashboardTimer({ sessions, dailyGoal, setDailyGoal, timerState, onOpenF
       </div>
 
       {/* Main Timer Layout */}
-      <div style={{ 
+      <div className="dashboard-timer-main-layout" style={{ 
         display: 'flex', 
-        flexDirection: timerState && timerState.mode === 'pomodoro' ? 'row' : 'column',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: timerState && timerState.mode === 'pomodoro' ? '4rem' : '2rem'
+        gap: 'clamp(1.5rem, 4vw, 2rem)',
+        flexWrap: 'wrap'
       }}>
         
         {/* Left Column: Circle (Only in Pomodoro) */}
@@ -234,17 +235,17 @@ function DashboardTimer({ sessions, dailyGoal, setDailyGoal, timerState, onOpenF
                     strokeDashoffset={offset}
                   />
                 </svg>
-                <Flame size={40} className="flame-icon" style={{ position: 'relative', zIndex: 1 }} />
+                <Flame size={40} className="flame-icon" style={{ position: 'relative', zIndex: 1, color: 'var(--icon-base)' }} />
               </div>
             </div>
           );
         })()}
 
         {/* Right Column: Timer Info */}
-        <div className="dash-info-col" style={{ display: 'flex', flexDirection: 'column', alignItems: timerState && timerState.mode === 'pomodoro' ? 'flex-start' : 'center' }}>
+        <div className="dash-info-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
           {timerState && timerState.mode === 'pomodoro' ? (
-            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
+            <div style={{ fontSize: 'clamp(1.1rem, 3vw, 1.5rem)', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
               {isGlobalTimerActive ? (timerState.phase === 'focus' ? 'Focus Time' : 'Rest Time') : 'Focus Time'}
             </div>
           ) : (
@@ -253,11 +254,11 @@ function DashboardTimer({ sessions, dailyGoal, setDailyGoal, timerState, onOpenF
             </div>
           )}
 
-          <div className="countdown-display" style={{ fontSize: '6rem', fontWeight: '700', fontFamily: "'Roboto Mono', monospace", lineHeight: 1, marginBottom: '1rem', color: isGlobalTimerActive && timerState.mode === 'pomodoro' ? (timerState.phase === 'focus' ? 'var(--timer-red)' : 'var(--timer-rest)') : 'var(--text-main)' }}>
+          <div className="countdown-display" style={{ fontWeight: '700', fontFamily: "'Roboto Mono', monospace", lineHeight: 1, marginBottom: '1rem', color: isGlobalTimerActive && timerState.mode === 'pomodoro' ? (timerState.phase === 'focus' ? 'var(--timer-red)' : 'var(--timer-rest)') : 'var(--text-main)' }}>
             {formattedTime}
           </div>
           
-          <div className="time-range-subtext" style={{ color: 'var(--text-muted)', opacity: 0.6, fontSize: '0.9rem', marginBottom: '2rem', minHeight: '1.2rem' }}>
+          <div className="time-range-subtext" style={{ color: 'var(--text-muted)', opacity: 0.6, minHeight: '1.2rem' }}>
             {isGlobalTimerActive ? `Recording: ${timerState.activeSubject?.name}` : getDashboardEstEnd()}
           </div>
         </div>
@@ -309,7 +310,7 @@ function FeedbackTab() {
   };
 
   return (
-    <div className="feedback-card glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '600px', margin: '0 auto', padding: '3rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className="feedback-card glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '600px', margin: '0 auto', padding: 'clamp(1.5rem, 4vw, 3rem)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
         <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(244, 63, 94, 0.3)' }}>
           <MessageSquare size={20} color="#fff" />
@@ -366,7 +367,7 @@ function FeedbackTab() {
             type="submit" 
             className="btn-primary" 
             disabled={isSubmitting || !feedback.trim() || !email.trim()}
-            style={{ marginTop: '0.5rem', width: '100%', padding: '1rem', fontSize: '1rem', background: (feedback.trim() && email.trim() && !isSubmitting) ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: (feedback.trim() && email.trim() && !isSubmitting) ? '#fff' : 'rgba(255,255,255,0.3)', pointerEvents: (feedback.trim() && email.trim() && !isSubmitting) ? 'auto' : 'none', boxShadow: (feedback.trim() && email.trim() && !isSubmitting) ? 'var(--glow-primary)' : 'none' }}
+            style={{ marginTop: '0.5rem', width: '100%', padding: '1rem', fontSize: '1rem', background: (feedback.trim() && email.trim() && !isSubmitting) ? 'var(--primary)' : 'var(--btn-disabled-bg)', color: (feedback.trim() && email.trim() && !isSubmitting) ? '#fff' : 'var(--btn-disabled-text)', pointerEvents: (feedback.trim() && email.trim() && !isSubmitting) ? 'auto' : 'none', boxShadow: (feedback.trim() && email.trim() && !isSubmitting) ? 'var(--glow-primary)' : 'none' }}
           >
             {isSubmitting ? 'Sending...' : 'Submit Feedback'}
           </button>

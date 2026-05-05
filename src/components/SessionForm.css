@@ -4,20 +4,21 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #0d0d0d;
+  background: var(--bg-base);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .timer-section-container {
   width: 100%;
   max-width: 900px;
-  padding: 2rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1.5rem;
 }
 
 /* ── Top Header Bar ── */
@@ -29,11 +30,11 @@
 }
 
 .d-day-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-subtle);
   color: var(--text-muted);
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 99px;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
@@ -49,11 +50,11 @@
 
 .header-duration-settings {
   display: flex;
-  gap: 1.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 0.35rem 1rem;
+  gap: 1rem;
+  background: var(--glass-bg-subtle);
+  padding: 0.3rem 0.75rem;
   border-radius: 99px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border-subtle);
 }
 
 .h-setting {
@@ -90,22 +91,23 @@
 .top-right-controls {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .pomodoro-toggle-wrap {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   color: var(--text-main);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
 .toggle-pill {
   width: 44px;
   height: 24px;
-  background: #333;
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border-subtle);
   border-radius: 99px;
   position: relative;
   transition: background 0.3s ease;
@@ -139,16 +141,15 @@
   opacity: 1;
 }
 
-/* ── Main Layout (Two Column) ── */
+/* ── Main Layout (Two Column → stacked on mobile) ── */
 .timer-main-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 4rem;
+  gap: 2rem;
 }
 
 .timer-main-layout.timer {
-  grid-template-columns: 1fr;
   text-align: center;
 }
 
@@ -163,19 +164,25 @@
 /* Left Column: Visual */
 .timer-visual-col {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .large-timer-circle {
-  width: 320px;
-  height: 320px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
   transition: all 0.5s ease;
   position: relative;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--glass-bg-subtle);
+}
+
+.large-timer-circle .flame-icon {
+  width: 50px;
+  height: 50px;
 }
 
 .large-timer-circle.focus {
@@ -197,7 +204,7 @@
 
 .timer-ring-bg {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.05);
+  stroke: var(--glass-border-subtle);
 }
 
 .timer-ring-progress {
@@ -217,7 +224,7 @@
 }
 
 .flame-icon {
-  color: #fff;
+  color: var(--icon-base);
   opacity: 0.9;
 }
 
@@ -246,68 +253,55 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  align-items: center;
+  text-align: center;
 }
 
 .session-label {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-main);
 }
 
 .countdown-display {
   font-family: 'Roboto Mono', monospace;
-  font-size: 6.5rem;
+  font-size: 3.5rem;
   font-weight: 700;
   color: var(--text-main);
   line-height: 1;
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 }
 
 .time-range-subtext {
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   opacity: 0.6;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .timer-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .main-action-btn {
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  color: #fff;
+  color: var(--icon-base);
 }
 
 .stop-action-btn {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(239, 68, 68, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  color: #ef4444;
-}
-
-.stop-action-btn:hover {
-  background: rgba(239, 68, 68, 0.3);
-  transform: scale(1.1);
-}
-
-.stop-action-btn {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: rgba(239, 68, 68, 0.2);
   display: flex;
@@ -329,7 +323,7 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 2rem;
-  padding: 1.5rem 2rem;
+  padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -365,20 +359,26 @@
 }
 
 .adjust-btn {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-subtle);
   color: var(--text-main);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
 .adjust-btn:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+/* SessionForm action buttons - responsive */
+.text-action-btn {
+  padding: 0.6rem 1.5rem !important;
+  font-size: 1rem !important;
 }
 
 @keyframes slideUp {
@@ -388,4 +388,126 @@
 
 .session-animate-slide-up {
   animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Responsive: Tablet ── */
+@media (min-width: 640px) {
+  .timer-section-container {
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+  .d-day-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  .large-timer-circle {
+    width: 260px;
+    height: 260px;
+  }
+  .large-timer-circle .flame-icon {
+    width: 60px;
+    height: 60px;
+  }
+  .session-label {
+    font-size: 1.35rem;
+  }
+  .countdown-display {
+    font-size: 5rem;
+    letter-spacing: -1.5px;
+  }
+  .time-range-subtext {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+  .main-action-btn {
+    width: 72px;
+    height: 72px;
+  }
+  .stop-action-btn {
+    width: 52px;
+    height: 52px;
+  }
+  .timer-actions {
+    gap: 1.25rem;
+  }
+  .text-action-btn {
+    padding: 0.8rem 2rem !important;
+    font-size: 1.1rem !important;
+  }
+  .adjust-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.25rem;
+  }
+  .pomodoro-settings-panel {
+    padding: 1.5rem 2rem;
+  }
+}
+
+/* ── Responsive: Desktop ── */
+@media (min-width: 1024px) {
+  .timer-section-container {
+    padding: 2rem;
+    gap: 3rem;
+  }
+  .timer-main-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+  .timer-main-layout.timer {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .timer-visual-col {
+    justify-content: flex-end;
+  }
+  .timer-info-col {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .timer-main-layout.timer .timer-info-col {
+    align-items: center;
+    text-align: center;
+  }
+  .timer-actions {
+    justify-content: flex-start;
+  }
+  .timer-main-layout.timer .timer-actions {
+    justify-content: center;
+  }
+  .large-timer-circle {
+    width: 320px;
+    height: 320px;
+  }
+  .large-timer-circle .flame-icon {
+    width: 80px;
+    height: 80px;
+  }
+  .session-label {
+    font-size: 1.5rem;
+  }
+  .countdown-display {
+    font-size: 6.5rem;
+    letter-spacing: -2px;
+  }
+  .time-range-subtext {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  .main-action-btn {
+    width: 80px;
+    height: 80px;
+  }
+  .stop-action-btn {
+    width: 56px;
+    height: 56px;
+  }
+  .timer-actions {
+    gap: 1.5rem;
+  }
+  .text-action-btn {
+    padding: 0.8rem 2.5rem !important;
+    font-size: 1.2rem !important;
+  }
 }
