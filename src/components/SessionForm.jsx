@@ -41,6 +41,14 @@ export function SessionForm({
   saveSession,
   onTimerAction
 }) {
+  // Prevent background scroll when full screen timer is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const handleMainButton = () => {
     setIsActive(!isActive);
   };

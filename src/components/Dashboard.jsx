@@ -381,6 +381,18 @@ function FeedbackTab() {
 
 export function Dashboard({ sessions, daysOff, setDaysOff, activeTab, setActiveTab, dailyGoal, setDailyGoal, drawerOpen, setDrawerOpen, timerState, onOpenFullScreen, onSwitchMode, setPomodoroMinutes, setRelaxMinutes, onTimerAction }) {
   const { user, isAuthenticated, isGuest, logout } = useAuth();
+  
+  // Prevent background scroll when drawer is open
+  useEffect(() => {
+    if (drawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [drawerOpen]);
 
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },

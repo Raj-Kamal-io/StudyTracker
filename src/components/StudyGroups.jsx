@@ -64,6 +64,15 @@ function CreateGroupModal({ onClose, onCreate }) {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [color, setColor] = useState(GROUP_COLORS[0].value);
+  
+  // Prevent background scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const handleCreate = () => {
     if (!name.trim()) return;
     onCreate({ id: crypto.randomUUID(), name: name.trim(), description: desc.trim(), color, inviteCode: generateInviteCode(), createdAt: new Date().toISOString(), members: generateMembers(Math.floor(Math.random() * 3) + 1) });
@@ -108,6 +117,15 @@ function CreateGroupModal({ onClose, onCreate }) {
 function JoinGroupModal({ onClose, onJoin, existingGroups }) {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  
+  // Prevent background scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const handleJoin = () => {
     const c = code.trim().toUpperCase();
     if (!c) return;
