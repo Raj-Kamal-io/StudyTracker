@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { CalendarWidget } from './CalendarWidget';
-import { Home, CalendarDays, Clock, Flame, BookOpen, Plus, MessageSquare, Send, BrainCircuit, Coffee, Play, Settings } from 'lucide-react';
+import { StudyGroups } from './StudyGroups';
+import { Home, CalendarDays, Clock, Flame, BookOpen, Plus, MessageSquare, Send, BrainCircuit, Coffee, Play, Settings, Menu, Users, X, LogOut, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Dashboard.css';
 
 // Stable helper outside component so it never causes useMemo to re-run
@@ -377,74 +379,110 @@ function FeedbackTab() {
   );
 }
 
-export function Dashboard({ sessions, daysOff, setDaysOff, activeTab, setActiveTab, dailyGoal, setDailyGoal, timerState, onOpenFullScreen, onSwitchMode, setPomodoroMinutes, setRelaxMinutes, onTimerAction }) {
+export function Dashboard({ sessions, daysOff, setDaysOff, activeTab, setActiveTab, dailyGoal, setDailyGoal, drawerOpen, setDrawerOpen, timerState, onOpenFullScreen, onSwitchMode, setPomodoroMinutes, setRelaxMinutes, onTimerAction }) {
+  const { user, isAuthenticated, isGuest, logout } = useAuth();
+
+  const navItems = [
+    { id: 'home', label: 'Home', icon: Home },
+    { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+    { id: 'groups', label: 'Groups', icon: Users },
+    { id: 'feedback', label: 'Feedback', icon: MessageSquare },
+  ];
+
+  const handleNavClick = (tabId) => {
+    setActiveTab(tabId);
+    setDrawerOpen(false);
+  };
 
   return (
-    <section className="dashboard animate-slide-up">
-      {/* Tab Bar */}
-      <div className="dashboard-tabs">
-        <button
-          className={`dashboard-tab ${activeTab === 'home' ? 'active' : ''}`}
-          onClick={() => setActiveTab('home')}
-          id="tab-home"
-        >
-          <Home size={16} />
-          Home
-        </button>
-        <button
-          className={`dashboard-tab ${activeTab === 'calendar' ? 'active' : ''}`}
-          onClick={() => setActiveTab('calendar')}
-          id="tab-calendar"
-        >
-          <CalendarDays size={16} />
-          Calendar
-        </button>
-        <button
-          className={`dashboard-tab ${activeTab === 'feedback' ? 'active' : ''}`}
-          onClick={() => setActiveTab('feedback')}
-          id="tab-feedback"
-        >
-          <MessageSquare size={16} />
-          Feedback
-        </button>
-        <div
-          className="dashboard-tab-indicator"
-          style={{ transform: activeTab === 'home' ? 'translateX(0%)' : activeTab === 'calendar' ? 'translateX(100%)' : 'translateX(200%)' }}
-        />
+    <>
+      {/* Backdrop Overlay */}
+      <div 
+        className={`nav-backdrop ${drawerOpen ? 'open' : ''}`} 
+        onClick={() => setDrawerOpen(false)} 
+      />
+
+      <div className={`nav-drawer ${drawerOpen ? 'open' : ''}`}>
+        <div className="nav-drawer-header">
+          <BrainCircuit size={24} color="var(--primary)" />
+          <span className="nav-drawer-title">Study<span className="text-gradient">Tracker</span></span>
+        </div>
+
+        <nav className="nav-drawer-nav">
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              className={`nav-drawer-item ${activeTab === item.id ? 'active' : ''}`}
+              onClick={() => handleNavClick(item.id)}
+              id={`nav-${item.id}`}
+            >
+              <item.icon size={20} />
+              <span>{item.label}</span>
+              {item.id === 'groups' && isGuest && (
+                <span className="nav-badge">Trial</span>
+              )}
+            </button>
+          ))}
+        </nav>
+
+        <div className="nav-drawer-footer">
+          {(isAuthenticated || isGuest) && (
+            <div className="nav-user-info">
+              <div className="nav-user-avatar">
+                <User size={18} />
+              </div>
+              <div className="nav-user-details">
+                <span className="nav-user-name">{isGuest ? 'Guest User' : user?.name}</span>
+                <span className="nav-user-email">{isGuest ? 'Limited access' : user?.email}</span>
+              </div>
+            </div>
+          )}
+          <button className="nav-drawer-item nav-logout-btn" onClick={logout}>
+            <LogOut size={18} />
+            <span>{isGuest ? 'Exit Guest Mode' : 'Log Out'}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Tab Content */}
-      <div className="dashboard-tab-content">
-        {activeTab === 'home' && (
-          <div className="tab-pane animate-fade-in">
-            <DashboardTimer 
-              sessions={sessions} 
-              dailyGoal={dailyGoal} 
-              setDailyGoal={setDailyGoal} 
-              timerState={timerState}
-              onOpenFullScreen={onOpenFullScreen}
-              onSwitchMode={onSwitchMode}
-              setPomodoroMinutes={setPomodoroMinutes}
-              setRelaxMinutes={setRelaxMinutes}
-              onTimerAction={onTimerAction}
-            />
-          </div>
-        )}
-        {activeTab === 'calendar' && (
-          <div className="tab-pane animate-fade-in">
-            <CalendarWidget
-              sessions={sessions}
-              daysOff={daysOff}
-              setDaysOff={setDaysOff}
-            />
-          </div>
-        )}
-        {activeTab === 'feedback' && (
-          <div className="tab-pane animate-fade-in">
-            <FeedbackTab />
-          </div>
-        )}
-      </div>
-    </section>
+      {/* Dashboard content — inside animated section */}
+      <section className="dashboard animate-slide-up">
+        <div className="dashboard-tab-content">
+          {activeTab === 'home' && (
+            <div className="tab-pane animate-fade-in">
+              <DashboardTimer 
+                sessions={sessions} 
+                dailyGoal={dailyGoal} 
+                setDailyGoal={setDailyGoal} 
+                timerState={timerState}
+                onOpenFullScreen={onOpenFullScreen}
+                onSwitchMode={onSwitchMode}
+                setPomodoroMinutes={setPomodoroMinutes}
+                setRelaxMinutes={setRelaxMinutes}
+                onTimerAction={onTimerAction}
+              />
+            </div>
+          )}
+          {activeTab === 'calendar' && (
+            <div className="tab-pane animate-fade-in">
+              <CalendarWidget
+                sessions={sessions}
+                daysOff={daysOff}
+                setDaysOff={setDaysOff}
+              />
+            </div>
+          )}
+          {activeTab === 'groups' && (
+            <div className="tab-pane animate-fade-in">
+              <StudyGroups />
+            </div>
+          )}
+          {activeTab === 'feedback' && (
+            <div className="tab-pane animate-fade-in">
+              <FeedbackTab />
+            </div>
+          )}
+        </div>
+      </section>
+    </>
   );
 }

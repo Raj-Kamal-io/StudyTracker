@@ -4,66 +4,228 @@
   max-width: 900px;
   display: grid;
   place-items: center;
-}
-
-/* ── Tab Bar ── */
-.dashboard-tabs {
-  display: flex;
   position: relative;
-  background: var(--bg-surface);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-xl);
-  padding: 4px;
-  gap: 0;
-  width: fit-content;
-  margin: 0 auto 1rem auto;
-  overflow: hidden;
 }
 
-.dashboard-tab {
+/* ── Hamburger Button (in header, next to theme toggle) ── */
+.hamburger-header-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  z-index: 10001;
+}
+
+.hamburger-header-btn:hover {
+  border-color: var(--primary);
+  box-shadow: var(--glow-primary);
+}
+
+.hamburger-line {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text-main);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+/* Animate to X when open */
+.hamburger-header-btn.open .hamburger-line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger-header-btn.open .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-header-btn.open .hamburger-line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ── Backdrop Overlay ── */
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.nav-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ── Navigation Drawer (right side only, glassmorphism) ── */
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-radius: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+
+  /* Glassmorphism */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.nav-drawer.open {
+  transform: translateX(0);
+}
+
+:root.light-mode .nav-drawer {
+  background: rgba(255, 255, 255, 0.75);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+:root.light-mode .nav-backdrop.open {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.nav-drawer-header {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: calc(var(--radius-xl) - 4px);
-  font-size: 0.75rem;
+  gap: 0.6rem;
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--glass-border-subtle);
+}
+
+.nav-drawer-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
-  color: var(--text-muted);
+}
+
+.nav-drawer-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  gap: 0.25rem;
+}
+
+.nav-drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-lg);
   background: transparent;
   border: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
-  transition: color var(--transition-fast);
-  position: relative;
-  z-index: 1;
-  min-width: 80px;
-  justify-content: center;
+  transition: all var(--transition-fast);
+  width: 100%;
+  text-align: left;
 }
 
-.dashboard-tab svg {
-  width: 14px;
-  height: 14px;
-}
-
-.dashboard-tab.active {
+.nav-drawer-item:hover {
+  background: var(--bg-surface-hover);
   color: var(--text-main);
 }
 
-.dashboard-tab-indicator {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 4px;
-  width: calc((100% - 8px) / 3);
-  background: var(--primary);
-  border-radius: calc(var(--radius-xl) - 6px);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.18;
-  pointer-events: none;
+.nav-drawer-item.active {
+  background: var(--primary-light);
+  color: var(--primary);
 }
 
-.dashboard-tab.active svg {
+.nav-drawer-item.active svg {
   color: var(--primary);
+}
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+  background: var(--orange-light);
+  color: var(--orange-main);
+}
+
+/* Drawer Footer */
+.nav-drawer-footer {
+  border-top: 1px solid var(--glass-border-subtle);
+  padding: 0.75rem;
+}
+
+.nav-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.nav-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nav-user-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-user-email {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-logout-btn {
+  color: var(--danger) !important;
+}
+
+.nav-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
 }
 
 /* ── Tab Content ── */
@@ -280,18 +442,8 @@
   .dashboard {
     margin: 0 auto 2rem auto;
   }
-  .dashboard-tabs {
-    margin: 0 auto 1.5rem auto;
-  }
-  .dashboard-tab {
-    gap: 0.5rem;
-    padding: 0.55rem 1.2rem;
-    font-size: 0.85rem;
-    min-width: 100px;
-  }
-  .dashboard-tab svg {
-    width: 16px;
-    height: 16px;
+  .nav-drawer {
+    width: 300px;
   }
   .dash-timer-circle {
     width: 120px;
@@ -326,12 +478,6 @@
 
 /* ── Responsive: Desktop ── */
 @media (min-width: 1024px) {
-  .dashboard-tab {
-    gap: 0.5rem;
-    padding: 0.55rem 1.4rem;
-    font-size: 0.875rem;
-    min-width: 110px;
-  }
   .dash-timer-circle {
     width: 140px;
     height: 140px;

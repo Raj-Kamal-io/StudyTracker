@@ -1,0 +1,137 @@
+.guest-banner {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.1));
+  border-bottom: 1px solid rgba(249, 115, 22, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.guest-banner-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.guest-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--orange-main);
+  font-size: 0.85rem;
+}
+
+.guest-banner-label {
+  font-weight: 600;
+}
+
+.guest-banner-time {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: var(--orange-light);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.guest-banner-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  background: var(--orange-main);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.guest-banner-cta:hover {
+  background: #ea580c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+/* Progress bar */
+.guest-banner-progress {
+  height: 2px;
+  background: rgba(249, 115, 22, 0.1);
+}
+
+.guest-banner-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange-main), #f97316);
+  transition: width 1s linear;
+}
+
+/* Expiry overlay */
+.guest-expired-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+.guest-expired-card {
+  max-width: 440px;
+  width: 100%;
+  padding: clamp(2rem, 5vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.guest-expired-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--orange-light);
+  color: var(--orange-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.guest-expired-card h2 {
+  font-size: 1.4rem;
+  font-family: 'Outfit', sans-serif;
+}
+
+.guest-expired-card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .guest-banner-inner {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .guest-banner-cta {
+    width: 100%;
+    justify-content: center;
+  }
+}

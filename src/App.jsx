@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BrainCircuit, Sun, Moon, Plus } from 'lucide-react';
+import { BrainCircuit, Sun, Moon, Plus, Menu } from 'lucide-react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Dashboard } from './components/Dashboard';
 import { SubjectManager } from './components/SubjectManager';
@@ -8,6 +8,7 @@ import { TodayProgress } from './components/TodayProgress';
 import './App.css';
 
 function App() {
+
   const [sessions, setSessions] = useLocalStorage('study-tracker-sessions', []);
   const [subjects, setSubjects] = useLocalStorage('study-tracker-subjects', []);
   const [tasks, setTasks] = useLocalStorage('study-tracker-tasks', []);
@@ -17,6 +18,7 @@ function App() {
   
   const [activeTimerSubject, setActiveTimerSubject] = useState(null);
   const [dashTab, setDashTab] = useState('home');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Global Timer State
   const [isTimerActive, setIsTimerActive] = useState(false);
@@ -199,7 +201,7 @@ function App() {
           <BrainCircuit size={36} className="logo-icon" />
           <h1>Study<span className="text-gradient">Tracker</span></h1>
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <button 
             className="btn-icon" 
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -207,6 +209,17 @@ function App() {
             style={{ width: '40px', height: '40px', background: 'var(--bg-surface)' }}
           >
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          <button 
+            className={`btn-icon hamburger-header-btn ${drawerOpen ? 'open' : ''}`}
+            onClick={() => setDrawerOpen(!drawerOpen)}
+            id="hamburger-menu-btn"
+            aria-label="Toggle navigation menu"
+            style={{ width: '40px', height: '40px', background: 'var(--bg-surface)' }}
+          >
+            <span className="hamburger-line" />
+            <span className="hamburger-line" />
+            <span className="hamburger-line" />
           </button>
         </div>
       </header>
@@ -220,6 +233,8 @@ function App() {
           setActiveTab={setDashTab}
           dailyGoal={dailyGoal}
           setDailyGoal={setDailyGoal}
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
           // Pass global timer state to dashboard
           timerState={{
             isActive: isTimerActive,
